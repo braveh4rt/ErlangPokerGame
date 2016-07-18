@@ -33,8 +33,9 @@
 %%%===================================================================
 
 join(Id, Tokens, GameId) ->
-  start_link(Id, Tokens, GameId),
-  game:joined(GameId, Id).
+  {ok, Pid} = start_link(Id, Tokens, GameId),
+  game:joined(GameId, Id),
+  {ok, Pid}.
 
 leave(Id) -> gen_server:call({global, Id}, terminate).
 

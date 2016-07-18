@@ -2,13 +2,13 @@
  [{description, "An OTP application"},
   {vsn, "0.1.0"},
   {registered, []},
-  {mod, { poker_app, []}},
+  {mod, {poker, []}},
   {applications,
    [kernel,
     stdlib
    ]},
   {env,[]},
-  {modules, []},
+  {modules, [game, player, game_sup, player_sup]},
 
   {maintainers, []},
   {licenses, []},

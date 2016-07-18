@@ -14,7 +14,7 @@
 %% API
 -export([random_hand/1, full_deck/0, group_by/2]).
 -export([
-  start/0,
+  start/1,
   stop/1,
   rank/1,
   deal/1,
@@ -46,10 +46,8 @@
 %%% API
 %%%===================================================================
 
-start() ->
-  Ref = make_ref(),
-  start_link(Ref),
-  {ok, Ref}.
+start(Ref) ->
+  start_link(Ref).
 
 stop(Id) -> gen_server:call({global, Id}, terminate ).
 

@@ -13,9 +13,10 @@
 -compile(export_all).
 
 deal_test() ->
-  {ok, Game} = game:start(),
-  player:join("P1", 120, Game),
-  player:join("P2", 120, Game),
+  application:start(poker),
+  {ok, Game} = poker:new_game(),
+  poker:player_join("P1", 120, Game),
+  poker:player_join("P2", 120, Game),
   game:deal(Game),
 
   ?assertMatch( {state, "P1", _, _, _, [{_, _} | _]}, player:get_state("P1")),
@@ -23,12 +24,14 @@ deal_test() ->
 
   player:leave("P1"),
   player:leave("P2"),
-  game:stop(Game).
+  game:stop(Game),
+  application:stop(poker).
 
 rank_test() ->
-  {ok, Game} = game:start(),
-  player:join("P1", 120, Game),
-  player:join("P2", 120, Game),
+  application:start(poker),
+  {ok, Game} = poker:new_game(),
+  poker:player_join("P1", 120, Game),
+  poker:player_join("P2", 120, Game),
 
   player:set_cards("P1", [{2,d},{3,d},{4,d},{5,s},{6,d}]),
   player:set_cards("P2", [{2,d},{3,d},{4,d},{5,d},{6,d}]),
@@ -49,12 +52,14 @@ rank_test() ->
   player:leave("P1"),
   player:leave("P2"),
   player:leave("P3"),
-  game:stop(Game).
+  game:stop(Game),
+  application:stop(poker).
 
 equal_hand_test() ->
-  {ok, Game} = game:start(),
-  player:join("P1", 120, Game),
-  player:join("P2", 120, Game),
+  application:start(poker),
+  {ok, Game} = poker:new_game(),
+  poker:player_join("P1", 120, Game),
+  poker:player_join("P2", 120, Game),
 
   player:set_cards("P1", [{2,s},{3,s},{4,s},{5,s},{6,s}]),
   player:set_cards("P2", [{2,d},{3,d},{4,d},{5,d},{6,d}]),
@@ -63,15 +68,17 @@ equal_hand_test() ->
 
   player:leave("P1"),
   player:leave("P2"),
-  game:stop(Game).
+  game:stop(Game),
+  application:stop(poker).
 
 game_test() ->
-  {ok, Game} = game:start(),
-  player:join("Mihai", 100, Game),
-  player:join("Robert", 100, Game),
-  player:join("Razvan", 100, Game),
-  player:join("Ilie", 100, Game),
-  player:join("Codrut", 100, Game),
+  application:start(poker),
+  {ok, Game} = poker:new_game(),
+  poker:player_join("Mihai", 100, Game),
+  poker:player_join("Robert", 100, Game),
+  poker:player_join("Razvan", 100, Game),
+  poker:player_join("Ilie", 100, Game),
+  poker:player_join("Codrut", 100, Game),
 
   game:deal(Game),
 
@@ -82,15 +89,17 @@ game_test() ->
   player:leave("Razvan"),
   player:leave("Robert"),
   player:leave("Mihai"),
-  game:stop(Game).
+  game:stop(Game),
+  application:stop(poker).
 
 betting_test() ->
-  {ok, G} = game:start(),
-  player:join("Mihai", 100, G),
-  player:join("Robert", 100, G),
-  player:join("Razvan", 100, G),
-  player:join("Ilie", 100, G),
-  player:join("Codrut", 100, G),
+  application:start(poker),
+  {ok, G}= poker:new_game(),
+  poker:player_join("Mihai", 100, G),
+  poker:player_join("Robert", 100, G),
+  poker:player_join("Razvan", 100, G),
+  poker:player_join("Ilie", 100, G),
+  poker:player_join("Codrut", 100, G),
   game:deal(G),
 
   %% Round 1 betting
@@ -136,23 +145,26 @@ betting_test() ->
   player:leave("Razvan"),
   player:leave("Robert"),
   player:leave("Mihai"),
-  game:stop(G).
+  game:stop(G),
+  application:stop(poker).
 
 stress_test() ->
-  stress(100, 5, 10).
+  application:start(poker),
+  stress(1000, 5, 10),
+  application:stop(poker).
 
 stress(GameNr, Deals, PlayerNr) ->
 
   PlayerNames = gen_names(PlayerNr * GameNr),
   Games = lists:map(
     fun (Idx) ->
-      {ok, G} = game:start(),
+      {ok, G} = poker:new_game(),
       Players = lists:map(
         fun(T) -> lists:nth(PlayerNr * ( Idx - 1 ) + T, PlayerNames) end,
         lists:seq(1,PlayerNr)
       ),
       lists:foreach(
-        fun(P) -> player:join(P, 100, G) end,
+        fun(P) -> poker:player_join(P, 100, G) end,
         Players
       ),
       {G, Players}
@@ -168,15 +180,15 @@ stress(GameNr, Deals, PlayerNr) ->
         lists:seq(1, Deals))
     end,
     Games
-  ),
-
-  lists:foreach(
-    fun({_G, Players}) ->
-      lists:foreach(fun(P) -> player:leave(P) end, Players),
-      game:stop(_G)
-    end,
-    Games
   ).
+
+%%  lists:foreach(
+%%    fun({_G, Players}) ->
+%%      lists:foreach(fun(P) -> player:leave(P) end, Players),
+%%      game:stop(_G)
+%%    end,
+%%    Games
+%%  ),
 
 gen_names(Number) ->
   lists:sublist(gen_names(Number, []), Number).
