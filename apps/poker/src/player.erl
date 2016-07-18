@@ -12,7 +12,7 @@
 -behaviour(gen_server).
 
 %% API
--export([join/3, leave/1, set_cards/2, get_state/1,hand/1, current_bet/1, check/1, open/2, fold/1, call/1, raise/2]).
+-export([join/3, leave/1, set_cards/2, get_state/1,hand/1, tokens/1, current_bet/1, check/1, open/2, fold/1, call/1, raise/2]).
 -export([stand/1, discard/2]).
 -export([start_link/3]).
 
@@ -50,6 +50,9 @@ hand(PlayerId) ->
 
 current_bet(PlayerId) ->
   gen_server:call({global, PlayerId}, current_bet).
+
+tokens(PlayerId) ->
+  gen_server:call({global, PlayerId}, get_tokens).
 
 %% Betting
 check(PlayerId) ->
@@ -133,6 +136,9 @@ handle_call(current_bet, _From, State) ->
 
 handle_call(get_state, _From, State) ->
   {reply, State, State};
+
+handle_call(get_tokens, _From, State) ->
+  {reply, State#state.tokens, State};
 
 handle_call(check, _From, State) ->
   {reply, ok, State};

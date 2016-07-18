@@ -120,10 +120,10 @@ betting_test() ->
 
   ?assertEqual( 20, player:current_bet("Mihai")),
   ?assertEqual( 20, player:current_bet("Robert")),
-
   ?assertEqual( 20, player:current_bet("Ilie")),
   ?assertEqual( 20, player:current_bet("Codrut")),
 
+  ?assertEqual ( 80, player:tokens("Mihai")),
   %% Discarding
   player:stand("Mihai"),
 
@@ -150,7 +150,7 @@ betting_test() ->
 
 stress_test() ->
   application:start(poker),
-  stress(1000, 5, 10),
+  stress(400, 5, 10),
   application:stop(poker).
 
 stress(GameNr, Deals, PlayerNr) ->
