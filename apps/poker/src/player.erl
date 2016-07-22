@@ -34,45 +34,45 @@
 
 join(Id, Tokens, GameId) ->
   {ok, Pid} = start_link(Id, Tokens, GameId),
-  game:joined(GameId, Id),
+  game:joined(GameId, Pid),
   {ok, Pid}.
 
-leave(Id) -> gen_server:call({global, Id}, terminate).
+set_cards(Pid, Cards) ->
+  gen_server:call(Pid, {set_cards, Cards}).
 
-set_cards(PlayerId, Cards) ->
-  gen_server:call({global, PlayerId}, {set_cards, Cards}).
+get_state(Pid) ->
+  gen_server:call(Pid, get_state ).
 
-get_state(PlayerId) ->
-  gen_server:call({global, PlayerId}, get_state ).
+leave(Pid) -> gen_server:call(Pid, terminate).
 
-hand(PlayerId) ->
-  gen_server:call({global, PlayerId}, get_hand).
+hand(Pid) ->
+  gen_server:call(Pid, get_hand).
 
-current_bet(PlayerId) ->
-  gen_server:call({global, PlayerId}, current_bet).
+current_bet(Pid) ->
+  gen_server:call(Pid, current_bet).
 
-tokens(PlayerId) ->
-  gen_server:call({global, PlayerId}, get_tokens).
+tokens(Pid) ->
+  gen_server:call(Pid, get_tokens).
 
 %% Betting
-check(PlayerId) ->
-  gen_server:call({global, PlayerId}, check).
+check(Pid) ->
+  gen_server:call(Pid, check).
 
-open(PlayerId, Amount) ->
-  gen_server:call({global, PlayerId}, {open, Amount}).
+open(Pid, Amount) ->
+  gen_server:call(Pid, {open, Amount}).
 
-fold(PlayerId) ->
-  gen_server:call({global, PlayerId}, fold).
+fold(Pid) ->
+  gen_server:call(Pid, fold).
 
-call(PlayerId) ->
-  gen_server:call({global, PlayerId}, call).
+call(Pid) ->
+  gen_server:call(Pid, call).
 
-raise(PlayerId, Amount) ->
-  gen_server:call({global, PlayerId}, {raise, Amount}).
+raise(Pid, Amount) ->
+  gen_server:call(Pid, {raise, Amount}).
 
 %% Discarding
-stand(_PlayerId) -> ok.
-discard(PlayerId, Cards) -> gen_server:call({global, PlayerId}, {discard, Cards}).
+stand(_) -> ok.
+discard(Pid, Cards) -> gen_server:call(Pid, {discard, Cards}).
 
 %%--------------------------------------------------------------------
 %% @doc

@@ -58,8 +58,8 @@ rank(GameId) -> gen_server:call({global, GameId}, rank).
 bet(GameId, Amount) ->
   gen_server:call({global, GameId}, {bet, Amount}).
 
-joined(GameId, PlayerId) ->
-  gen_server:call({global, GameId}, {joined, PlayerId}).
+joined(GameId, Pid) ->
+  gen_server:call({global, GameId}, {joined, Pid}).
 
 get_players(GameId) -> gen_server:call({global, GameId}, get_players).
 
